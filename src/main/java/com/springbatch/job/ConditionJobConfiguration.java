@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Data
 @Configuration  //모든 Job은 @Configuration으로 등록
-public class SimpleConditionJobConfiguration {
+public class ConditionJobConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
