@@ -1,0 +1,43 @@
+
+spring:
+  batch:
+    job:
+      names: ${job.name:NONE}
+      # `:`을 기준으로 좌측에 job.name 은 program argument 값이고,
+      # 우측에 NONE 은 좌측에 할당하는 값이 없으면 할당하지 않겠다 라는 의미다.
+      # 중요한 것은 NONE 이 할당되면 어떠한 배치도 실행되지 않는다.
+  profiles:
+    active: local
+server:
+  port: 8080
+---
+spring:
+  profiles: local
+  datasource:
+    hikari:
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+      jdbc-url: jdbc:h2:~/h2
+
+  #H2 Settings
+  h2:
+    console:
+      enabled: true
+      path: /h2
+      settings:
+        trace: true
+        web-allow-others: false
+
+  #JPA Settings
+  jpa:
+    show-sql: false
+    open-in-view: false
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
