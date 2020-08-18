@@ -40,7 +40,7 @@ public class ConditionJobConfiguration {
     }
     //이 아래 소스로 argument 값으로 조절해볼려고 했지만, 잘되지 않았다. 왜 일까?
     // error : singleton bean creation not allowed while singletons of this factory are is destruction(Do not request a bean from a BeanFactory in a destroy method implementation!)
-    // 즉, 싱글톤 객체를 파라미터만으로 다른 Step 을 탈 수 있게 만드는 것은 절대적으로 불가능하다라는 것이다. 그리고 요청 갑승로 빈을 다시 만드는게 안돼! 뭐 이런뜻..
+    // 즉, 싱글톤 객체를 파라미터만으로 다른 Step 을 탈 수 있게 만드는 것은 절대적으로 불가능하다라는 것이다. 그리고 요청 값으로 빈을 다시 만드는게 안돼! 뭐 이런뜻..
    /* @Bean
     @JobScope
     public Step conditionJobStep(@Value("#{jobParameters[booleans]}")String bool){
