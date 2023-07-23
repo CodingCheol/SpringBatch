@@ -1,7 +1,7 @@
-package com.springbatch.job;
+package com.spring.batch.job;
 
-import com.springbatch.jpa.entity.HistoryEntity;
-import com.springbatch.jpa.entity.SenderEntity;
+import com.spring.batch.jpa.entity.HistoryEntity;
+import com.spring.batch.jpa.entity.SenderEntity;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -14,7 +14,7 @@ import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 @Slf4j
 @Data
@@ -36,7 +36,7 @@ public class ChunkJobConfiguration {
     }
     private Step chunkStep(){
         return stepBuilderFactory.get(STEP_NAME)
-                .<SenderEntity,HistoryEntity> chunk(100)    // I•O 지정 하지 않을 시에는 에러가 날 수 있으므로 지정하자.
+                .<SenderEntity, HistoryEntity> chunk(100)    // I•O 지정 하지 않을 시에는 에러가 날 수 있으므로 지정하자.
                 .reader(reader())
                 .processor(processor())
                 .writer(writer())

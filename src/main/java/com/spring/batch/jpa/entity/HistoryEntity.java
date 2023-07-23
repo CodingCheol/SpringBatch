@@ -1,10 +1,10 @@
-package com.springbatch.jpa.entity;
+package com.spring.batch.jpa.entity;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 import java.util.stream.Collectors;
 

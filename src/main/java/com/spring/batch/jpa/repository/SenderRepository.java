@@ -1,6 +1,6 @@
-package com.springbatch.jpa.repository;
+package com.spring.batch.jpa.repository;
 
-import com.springbatch.jpa.entity.SenderEntity;
+import com.spring.batch.jpa.entity.SenderEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SenderRepository extends JpaRepository<SenderEntity, Long> {

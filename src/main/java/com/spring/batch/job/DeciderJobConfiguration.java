@@ -1,4 +1,4 @@
-package com.springbatch.job;
+package com.spring.batch.job;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
