@@ -1,10 +1,9 @@
 package com.spring.batch.jpa.entity;
 
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import jakarta.persistence.*;
 
 @Entity
 @Getter
@@ -12,13 +11,13 @@ import jakarta.persistence.*;
 public class MoneyEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    private String value;
+    private int value;
     @Builder
-    public MoneyEntity(String value){
+    public MoneyEntity(int value){
         this.value=value;
     }
 }

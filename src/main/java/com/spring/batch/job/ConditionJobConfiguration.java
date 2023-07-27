@@ -1,26 +1,28 @@
 package com.spring.batch.job;
 
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
-@Data
-@Configuration  //모든 Job은 @Configuration으로 등록
+@Configuration
+@RequiredArgsConstructor
 public class ConditionJobConfiguration {
-    private final JobBuilderFactory jobBuilderFactory;
-    private final StepBuilderFactory stepBuilderFactory;
+    private final JobRepository jobRepository;
+    private final PlatformTransactionManager platformTransactionManager;
 
     @Bean
-    public Job conditionJob(){
-        return jobBuilderFactory.get("conditionJob")       //Job 의 이름을 설정.
+    public Job conditionJob() {
+        return new JobBuilder("conditionJob", jobRepository)
                 .start(conditionJobStep())
                     .on(ExitStatus.FAILED.getExitCode())
                     .to(failJobStep())
@@ -29,62 +31,48 @@ public class ConditionJobConfiguration {
                 .from(conditionJobStep())
                     .on(ExitStatus.COMPLETED.getExitCode())
                     .to(completedJobStep())
-                    .next(completedNextJobStep())
+                .next(completedNextJobStep())
                     .on("*")
                     .end()
                 .end()
                 .build();
     }
-    //이 아래 소스로 argument 값으로 조절해볼려고 했지만, 잘되지 않았다. 왜 일까?
-    // error : singleton bean creation not allowed while singletons of this factory are is destruction(Do not request a bean from a BeanFactory in a destroy method implementation!)
-    // 즉, 싱글톤 객체를 파라미터만으로 다른 Step 을 탈 수 있게 만드는 것은 절대적으로 불가능하다라는 것이다. 그리고 요청 값으로 빈을 다시 만드는게 안돼! 뭐 이런뜻..
-   /* @Bean
-    @JobScope
-    public Step conditionJobStep(@Value("#{jobParameters[booleans]}")String bool){
-        return stepBuilderFactory.get("conditionJobStep")                //Step 의 이름을 설정.
-                .tasklet(((stepContribution, chunkContext) -> {
-                    log.info("::>>>> This is conditionJobStep");
-                    log.info("::>>>> Condition :{}",bool);
-                    if( Boolean.parseBoolean(bool) ){
-                        stepContribution.setExitStatus(ExitStatus.COMPLETED);
-                    }else{
-                        stepContribution.setExitStatus(ExitStatus.FAILED);
-                    }
-                    return RepeatStatus.FINISHED;
-                })).build();
-    }*/
+
     @Bean
-    public Step conditionJobStep(){
-        return stepBuilderFactory.get("conditionJobStep")                //Step 의 이름을 설정.
-                .tasklet(((stepContribution, chunkContext) -> {
+    public Step conditionJobStep() {
+        return new StepBuilder("conditionJobStep", jobRepository)                //Step 의 이름을 설정.
+                .tasklet((stepContribution, chunkContext) -> {
                     log.info("::>>>> This is conditionJobStep");
                     stepContribution.setExitStatus(ExitStatus.FAILED);
                     return RepeatStatus.FINISHED;
-                })).build();
+                }, platformTransactionManager).build();
     }
+
     @Bean
-    public Step failJobStep(){
-        return stepBuilderFactory.get("failJobStep")                //Step 의 이름을 설정.
-                .tasklet(((stepContribution, chunkContext) -> {
+    public Step failJobStep() {
+        return new StepBuilder("failJobStep", jobRepository)
+                .tasklet((stepContribution, chunkContext) -> {
                     log.info("::>>>> This is failJobStep");
                     return RepeatStatus.FINISHED;
-                })).build();
+                }, platformTransactionManager).build();
     }
+
     @Bean
-    public Step completedJobStep(){
-        return stepBuilderFactory.get("completedJobStep")                //Step 의 이름을 설정.
-                .tasklet(((stepContribution, chunkContext) -> {
+    public Step completedJobStep() {
+        return new StepBuilder("completedJobStep", jobRepository)
+                .tasklet((stepContribution, chunkContext) -> {
                     log.info("::>>>> This is completedJobStep");
                     return RepeatStatus.FINISHED;
-                })).build();
+                }, platformTransactionManager).build();
     }
+
     @Bean
-    public Step completedNextJobStep(){
-        return stepBuilderFactory.get("completedNextJobStep")                //Step 의 이름을 설정.
-                .tasklet(((stepContribution, chunkContext) -> {
+    public Step completedNextJobStep() {
+        return new StepBuilder("completedNextJobStep", jobRepository)
+                .tasklet((stepContribution, chunkContext) -> {
                     log.info("::>>>> This is completedNextJobStep");
                     return RepeatStatus.FINISHED;
-                })).build();
+                }, platformTransactionManager).build();
     }
 
 }

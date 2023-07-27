@@ -1,27 +1,23 @@
 
 ##READER 처리 log level
-logging.level.org.springframework.batch: DEBUG
-
+logging:
+  level:
+    org.springframework.batch: DEBUG
+server:
+  port: 8080
 spring:
   batch:
     job:
-      names: ${job.name:NONE}
+      enabled: true
+      name: ${job.name:NONE}
       # `:`을 기준으로 좌측에 job.name 은 program argument 값이고,
       # 우측에 NONE 은 좌측에 할당하는 값이 없으면 할당하지 않겠다 라는 의미다.
       # 중요한 것은 NONE 이 할당되면 어떠한 배치도 실행되지 않는다.
-  profiles:
-    active: local
-server:
-  port: 8080
----
-spring:
-  profiles: local
   datasource:
-    hikari:
-      username: sa
-      password:
-      driver-class-name: org.h2.Driver
-      jdbc-url: jdbc:h2:~/h2
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testDB;MODE=Mysql
+    username: sa
+    password:
 
   #H2 Settings
   h2:
@@ -41,6 +37,8 @@ spring:
       ddl-auto: create-drop
     properties:
       hibernate:
+        #https://www.baeldung.com/spring-boot-h2-jdbcsqlsyntaxerrorexception-expected-identifier
+        globally_quoted_identifiers: true
         format_sql: true
         use_sql_comments: true
     database: h2
